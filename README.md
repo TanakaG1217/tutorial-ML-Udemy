@@ -1,4 +1,4 @@
-##　はじめに
+## はじめに
 このリポジトリでは、以下のUdemyコースを学習しながら作成したものです。
 KaggleのTitanic - Machine Learning from Disaster を使って学習しました。
 

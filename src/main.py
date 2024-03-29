@@ -8,6 +8,7 @@ import seaborn as sns #pltの拡張機能
 
 
 
+
 # データセット読み込み
 DATA_TRAIN = pd.read_csv('../dataset/train.csv')
 DATA_TEST = pd.read_csv('../dataset/test.csv')
@@ -50,7 +51,7 @@ data_all['Fare'].fillna( np.mean(data_all['Fare']) , inplace = True )
 data_all['Age'].fillna( np.mean(data_all['Age']) , inplace = True )
 
 #特徴量削除
-drop_columns = ['PassengerId','Name','Parch','Ticket']
+drop_columns = ['PassengerId','Name','Parch','Ticket','Cabin']
 data_all.drop( drop_columns, axis=1 , inplace=True )
 
 
@@ -58,11 +59,45 @@ data_all.drop( drop_columns, axis=1 , inplace=True )
 FEATURED_DATA_TRAIN = data_all[:len(DATA_TRAIN)]
 FEATURED_DATA_TEST = data_all[len(DATA_TRAIN):]
 
+#print (FEATURED_DATA_TRAIN ) 
+#print (FEATURED_DATA_TEST ) 
 
-print (FEATURED_DATA_TRAIN ) 
 
-print (FEATURED_DATA_TEST ) 
 
+
+"""
+モデル作成
+"""
+from sklearn.ensemble import  RandomForestClassifier #ランダムフォレストアルゴリズム
+
+#特徴量と目的変数分離
+y_data_train = FEATURED_DATA_TRAIN['Survived']
+x_data_train = FEATURED_DATA_TRAIN.drop('Survived',axis =1 )
+x_data_test = FEATURED_DATA_TEST.drop('Survived',axis = 1)
+#print(y_data_train,x_data_test,x_data_train)
+
+#ランダムフォレストアルゴリズム
+clf = RandomForestClassifier(n_estimators=100, max_depth=2, random_state=0) #n_est 決定木の本数、max　木の深さ、rand 
+
+#教師データ学習
+clf.fit( x_data_train , y_data_train )
+
+
+"""
+予測
+"""
+#predictの閾値が0.5なので01 で返される
+y_data_pred = clf.predict(x_data_test)
+
+print(y_data_pred)
+
+"""
+submit
+"""
+#kaggleようにCSVとして保存
+submit = DATA_GENDER_SUBMISSION
+submit['Survived'] = list( map(int, y_data_pred ) )
+submit.to_csv('../submit/randomForest_sub.csv' , index = False )
 
 
 
